@@ -11,7 +11,7 @@
 <meta name="application-name" content="Moomooapp" />
 <meta name="description" content="Fullscreen mobile prototype PWA." />
 <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
-<link rel="preload" as="image" href="./intro-screen.png" />
+<link rel="preload" as="image" href="./splash-screen.png" />
 <link rel="preload" as="image" href="./screens/accounts.png" />
 <link rel="preload" as="image" href="./screens/watchlists.png" />
 <link rel="preload" as="image" href="./screens/markets.png" />
@@ -62,6 +62,9 @@ body {
   opacity: 1;
   transition: opacity .12s ease;
 }
+body.native-system-bars .app-shell {
+  background: #fff;
+}
 body.app-sizing-pending .app-shell {
   opacity: 0;
 }
@@ -83,6 +86,7 @@ body.app-sizing-pending .app-shell {
   padding: 0;
   border: 0;
   outline: 0;
+  background: #111315;
   color: inherit;
   font: inherit;
   cursor: pointer;
@@ -96,9 +100,12 @@ body.app-sizing-pending .app-shell {
   pointer-events: none;
 }
 .screen-image {
+  position: absolute;
+  left: var(--frame-left, 0px);
+  top: var(--frame-top, 0px);
   display: block;
-  width: 100%;
-  height: var(--app-height, 100vh);
+  width: var(--frame-width, 100vw);
+  height: var(--frame-height, var(--app-height, 100vh));
   object-fit: fill;
   object-position: top center;
   background: #fff;
@@ -108,7 +115,10 @@ body.app-sizing-pending .app-shell {
 }
 .hotspot-layer {
   position: absolute;
-  inset: 0;
+  left: var(--frame-left, 0px);
+  top: var(--frame-top, 0px);
+  width: var(--frame-width, 100vw);
+  height: var(--frame-height, var(--app-height, 100vh));
   z-index: 4;
   pointer-events: none;
 }
@@ -137,6 +147,34 @@ body.app-sizing-pending .app-shell {
 }
 body[data-active-screen="search"] .tap-zone[data-back] {
   pointer-events: auto;
+}
+.native-mask {
+  position: absolute;
+  left: var(--frame-left, 0px);
+  width: var(--frame-width, 100vw);
+  z-index: 5;
+  display: none;
+  pointer-events: none;
+}
+.native-mask.top {
+  display: block;
+}
+body.native-system-bars .native-mask.bottom {
+  display: block;
+}
+.native-mask.top {
+  top: var(--frame-top, 0px);
+  height: calc(var(--frame-height, 1280px) * .066);
+  background: #fff;
+}
+.native-mask.bottom {
+  top: calc(var(--frame-top, 0px) + var(--frame-height, 1280px) * .968);
+  height: calc(var(--frame-height, 1280px) * .04);
+  background: #fff;
+}
+.intro-screen .native-mask.top,
+.intro-screen .native-mask.bottom {
+  background: #111315;
 }
 .app-loader {
   position: absolute;
@@ -235,7 +273,10 @@ body.screen-switching .app-loader {
 }
 .balance-patches {
   position: absolute;
-  inset: 0;
+  left: var(--frame-left, 0px);
+  top: var(--frame-top, 0px);
+  width: var(--frame-width, 100vw);
+  height: var(--frame-height, var(--app-height, 100vh));
   z-index: 3;
   pointer-events: none;
 }
@@ -261,7 +302,7 @@ body.screen-switching .app-loader {
   top: 27.62%;
   width: 31.4%;
   height: 4.1%;
-  font-size: 6.25vw;
+  font-size: calc(var(--frame-width, 588px) * .0625);
   line-height: .98;
   font-weight: 450;
 }
@@ -276,7 +317,7 @@ body[data-active-screen="accounts"] .account-assets {
   top: 24.98%;
   width: 31.4%;
   height: 4.0%;
-  font-size: 6.25vw;
+  font-size: calc(var(--frame-width, 588px) * .0625);
   line-height: .98;
   font-weight: 450;
 }
@@ -288,21 +329,21 @@ body[data-active-screen="accounts"] .account-assets {
 .account-assets.hero {
   top: 18.55%;
   height: 4.7%;
-  font-size: 7.92vw;
+  font-size: calc(var(--frame-width, 588px) * .0792);
   line-height: .96;
   font-weight: 520;
 }
 .account-assets.card-one {
   top: 49.45%;
   height: 4.1%;
-  font-size: 6.45vw;
+  font-size: calc(var(--frame-width, 588px) * .0645);
   line-height: .98;
   font-weight: 440;
 }
 .account-assets.card-two {
   top: 63.95%;
   height: 4.1%;
-  font-size: 6.45vw;
+  font-size: calc(var(--frame-width, 588px) * .0645);
   line-height: .98;
   font-weight: 440;
 }
@@ -355,8 +396,7 @@ body.show-image .image-screen {
   body,
   .app-shell,
   .intro-screen,
-  .image-screen,
-  .screen-image {
+  .image-screen {
     height: var(--app-height, 100dvh);
   }
 }
@@ -365,19 +405,20 @@ body.show-image .image-screen {
 <body class="app-sizing-pending">
 <main class="app-shell" aria-label="Two-screen app prototype">
   <button class="intro-screen" type="button" aria-label="Open app screen">
-    <img class="screen-image" src="./intro-screen.png" alt="Intro prototype screen" draggable="false" decoding="sync" fetchpriority="high" />
-    <div class="balance-patches intro-balance-patches" aria-hidden="true">
-      <span class="balance-patch intro-assets"></span>
-    </div>
+    <img class="screen-image" src="./splash-screen.png" alt="Moomoo launch screen" draggable="false" decoding="sync" fetchpriority="high" />
+    <span class="native-mask top" aria-hidden="true"></span>
+    <span class="native-mask bottom" aria-hidden="true"></span>
   </button>
   <section class="image-screen" aria-label="Final app screen">
-    <img class="screen-image" src="./screens/accounts.png" alt="App preview screen" draggable="false" decoding="sync" fetchpriority="high" data-app-image />
+    <img class="screen-image" src="./screens/watchlists.png" alt="watchlists app screen" draggable="false" decoding="sync" fetchpriority="high" data-app-image />
     <div class="balance-patches image-balance-patches" aria-hidden="true">
       <span class="balance-patch account-assets hero"></span>
       <span class="balance-patch account-assets card-one"></span>
       <span class="balance-patch account-assets card-two"></span>
       <span class="balance-patch watchlist-assets"></span>
     </div>
+    <span class="native-mask top" aria-hidden="true"></span>
+    <span class="native-mask bottom" aria-hidden="true"></span>
     <div class="hotspot-layer" aria-label="터치 가능한 앱 영역">
       <button class="tap-zone" type="button" aria-label="Back" data-back="1" style="left:0.0%; top:5.2%; width:9.4%; height:6.4%;"></button>
       <button class="tap-zone" type="button" aria-label="Search" data-screen="search" data-tap="Search" style="left:78.3%; top:6.4%; width:9.2%; height:5.2%;"></button>
@@ -436,22 +477,49 @@ const screens = {
   discover: "./screens/discover.png",
   search: "./screens/search.png"
 };
-let activeScreen = "accounts";
-let previousScreen = "accounts";
+const requestedScreen = location.hash.replace("#", "");
+let activeScreen = screens[requestedScreen] ? requestedScreen : "watchlists";
+let previousScreen = activeScreen;
 let lastViewportSignature = "";
 let stableViewportFrames = 0;
 let launchTimer = 0;
+let splashTimer = 0;
 document.body.dataset.activeScreen = activeScreen;
 
 function setAppHeight() {
   const viewport = window.visualViewport;
+  const widthCandidates = [
+    window.innerWidth,
+    document.documentElement.clientWidth,
+    viewport?.width
+  ].filter((value) => Number.isFinite(value) && value > 0);
   const candidates = [
     window.innerHeight,
     document.documentElement.clientHeight,
     viewport?.height
   ].filter((value) => Number.isFinite(value) && value > 0);
+  const width = Math.ceil(Math.max(...widthCandidates));
   const height = Math.ceil(Math.max(...candidates));
+  const designWidth = 588;
+  const designHeight = 1280;
+  const designRatio = designWidth / designHeight;
+  const viewportRatio = width / height;
+  let frameWidth;
+  let frameHeight;
+
+  if (viewportRatio > designRatio) {
+    frameWidth = width;
+    frameHeight = width / designRatio;
+  } else {
+    frameHeight = height;
+    frameWidth = height * designRatio;
+  }
+
   document.documentElement.style.setProperty("--app-height", `${height}px`);
+  document.documentElement.style.setProperty("--frame-width", `${frameWidth}px`);
+  document.documentElement.style.setProperty("--frame-height", `${frameHeight}px`);
+  document.documentElement.style.setProperty("--frame-left", `${(width - frameWidth) / 2}px`);
+  document.documentElement.style.setProperty("--frame-top", "0px");
   return height;
 }
 
@@ -508,7 +576,7 @@ window.addEventListener("orientationchange", () => {
 window.addEventListener("pageshow", scheduleFit, { passive: true });
 
 Promise.allSettled([
-  preloadImage("./intro-screen.png"),
+  preloadImage("./splash-screen.png"),
   ...Object.values(screens).map(preloadImage)
 ]).finally(() => {
   scheduleFit();
@@ -525,6 +593,7 @@ function showIntroScreen() {
 
 function showLaunchThenOpen() {
   window.clearTimeout(launchTimer);
+  window.clearTimeout(splashTimer);
   setAppHeight();
   document.body.classList.add("launching");
   launchTimer = window.setTimeout(() => {
@@ -541,7 +610,7 @@ function setScreen(name, options = {}) {
   document.body.classList.add("screen-switching");
   appImage.src = screens[name];
   appImage.alt = `${name} app screen`;
-  openImageScreen();
+  if (options.open !== false) openImageScreen();
   window.setTimeout(() => document.body.classList.remove("screen-switching"), 150);
   if (options.push !== false && location.hash !== `#${name}`) {
     history.pushState({ screen: name }, "", `#${name}`);
@@ -582,10 +651,17 @@ function runAction(label) {
   openSheet(title, copy);
 }
 
-intro.addEventListener("click", () => showLaunchThenOpen());
+function finishSplash() {
+  window.clearTimeout(splashTimer);
+  window.clearTimeout(launchTimer);
+  document.body.classList.remove("launching");
+  setScreen(activeScreen, { push: false });
+}
+
+intro.addEventListener("click", () => finishSplash());
 intro.addEventListener("touchend", (event) => {
   event.preventDefault();
-  showLaunchThenOpen();
+  finishSplash();
 }, { passive: false });
 
 tapZones.forEach((zone) => {
@@ -640,10 +716,18 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeSheet();
 });
 
-const initialScreen = location.hash.replace("#", "");
-if (screens[initialScreen]) {
-  setScreen(initialScreen, { push: false });
+if (appImage) {
+  appImage.src = screens[activeScreen];
+  appImage.alt = `${activeScreen} app screen`;
 }
+
+const isIOSLike = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+if (isIOSLike || new URLSearchParams(location.search).has("native-bars")) {
+  document.body.classList.add("native-system-bars");
+}
+
+splashTimer = window.setTimeout(finishSplash, 1150);
 
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
   window.addEventListener("load", () => {

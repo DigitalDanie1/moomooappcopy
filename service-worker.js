@@ -1,8 +1,9 @@
-const CACHE_NAME = "image-preview-pwa-v11";
+const CACHE_NAME = "image-preview-pwa-v13";
 const SCOPE_URL = self.registration.scope;
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./splash-screen.png",
   "./intro-screen.png",
   "./app-screen.png",
   "./screens/accounts.png",

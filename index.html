@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#ffffff" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Moomooapp" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="application-name" content="Moomooapp" />
+<meta name="description" content="Fullscreen mobile prototype PWA." />
+<meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+<link rel="preload" as="image" href="./intro-screen.png" />
+<link rel="preload" as="image" href="./screens/accounts.png" />
+<link rel="preload" as="image" href="./screens/watchlists.png" />
+<link rel="preload" as="image" href="./screens/markets.png" />
+<link rel="preload" as="image" href="./screens/wealth.png" />
+<link rel="preload" as="image" href="./screens/discover.png" />
+<link rel="preload" as="image" href="./screens/search.png" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+<title>Moomooapp</title>
+<style>
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  color: #111827;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+html {
+  background: #fff;
+}
+body {
+  min-height: var(--app-height, 100vh);
+  padding: 0;
+  touch-action: manipulation;
+}
+.app-shell {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: var(--app-height, 100vh);
+  overflow: hidden;
+  background: #fff;
+  opacity: 1;
+  transition: opacity .12s ease;
+}
+body.app-sizing-pending .app-shell {
+  opacity: 0;
+}
+.intro-screen,
+.image-screen {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  width: 100%;
+  height: var(--app-height, 100vh);
+  overflow: hidden;
+  background: #fff;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.intro-screen {
+  appearance: none;
+  -webkit-appearance: none;
+  place-items: start center;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  z-index: 2;
+}
+.image-screen {
+  place-items: start center;
+  z-index: 1;
+  opacity: 0;
+  transform: translateX(16px);
+  pointer-events: none;
+}
+.screen-image {
+  display: block;
+  width: 100%;
+  height: var(--app-height, 100vh);
+  object-fit: fill;
+  object-position: top center;
+  background: #fff;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-user-drag: none;
+}
+.hotspot-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.tap-zone {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  display: block;
+  border: 0;
+  border-radius: 18px;
+  padding: 0;
+  background: transparent;
+  color: transparent;
+  outline: none;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.tap-zone:focus,
+.tap-zone:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.tap-zone[data-back] {
+  pointer-events: none;
+}
+body[data-active-screen="search"] .tap-zone[data-back] {
+  pointer-events: auto;
+}
+.app-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, .48);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .14s ease;
+}
+body.launching .app-loader,
+body.screen-switching .app-loader {
+  opacity: 1;
+}
+.loader-dot {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(255, 105, 20, .22);
+  border-top-color: #ff6a13;
+  border-radius: 50%;
+  animation: spin .62s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 12px max(10px, env(safe-area-inset-bottom));
+  background: rgba(0, 0, 0, .18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .16s ease;
+}
+.sheet-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.action-sheet {
+  width: min(564px, calc(100vw - 24px));
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 -18px 46px rgba(15, 23, 42, .18);
+  color: #111;
+  transform: translateY(18px);
+  transition: transform .16s ease;
+  overflow: hidden;
+}
+.sheet-backdrop.is-open .action-sheet {
+  transform: translateY(0);
+}
+.sheet-grabber {
+  width: 42px;
+  height: 5px;
+  margin: 10px auto 8px;
+  border-radius: 999px;
+  background: #d8dce2;
+}
+.sheet-body {
+  padding: 6px 20px 18px;
+}
+.sheet-title {
+  margin: 0 0 8px;
+  font-size: 19px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+.sheet-copy {
+  margin: 0 0 14px;
+  color: #5f6672;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.sheet-actions {
+  display: grid;
+  gap: 8px;
+}
+.sheet-action {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  background: #f3f5f8;
+  color: #17191d;
+  font-size: 15px;
+  font-weight: 700;
+}
+.sheet-action.primary {
+  background: #ff6a13;
+  color: #fff;
+}
+.balance-patches {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.balance-patch {
+  position: absolute;
+  display: none;
+  overflow: hidden;
+  background: #fff;
+  color: #08090b;
+  font-family: "MiSans", "MiSans Simple", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -.055em;
+  white-space: nowrap;
+}
+.balance-patch::after {
+  content: "38,560";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.intro-balance-patches .intro-assets {
+  display: block;
+  left: 3.1%;
+  top: 27.62%;
+  width: 31.4%;
+  height: 4.1%;
+  font-size: 6.25vw;
+  line-height: .98;
+  font-weight: 450;
+}
+body[data-active-screen="watchlists"] .watchlist-assets {
+  display: block;
+}
+body[data-active-screen="accounts"] .account-assets {
+  display: block;
+}
+.watchlist-assets {
+  left: 3.1%;
+  top: 24.98%;
+  width: 31.4%;
+  height: 4.0%;
+  font-size: 6.25vw;
+  line-height: .98;
+  font-weight: 450;
+}
+.account-assets {
+  left: 6.0%;
+  width: 32.0%;
+  background: #f7f8fa;
+}
+.account-assets.hero {
+  top: 18.55%;
+  height: 4.7%;
+  font-size: 7.92vw;
+  line-height: .96;
+  font-weight: 520;
+}
+.account-assets.card-one {
+  top: 49.45%;
+  height: 4.1%;
+  font-size: 6.45vw;
+  line-height: .98;
+  font-weight: 440;
+}
+.account-assets.card-two {
+  top: 63.95%;
+  height: 4.1%;
+  font-size: 6.45vw;
+  line-height: .98;
+  font-weight: 440;
+}
+.fallback {
+  display: none;
+  width: min(340px, calc(100vw - 36px));
+  margin-top: 22vh;
+  padding: 18px;
+  border: 1px solid #d9e1ec;
+  border-radius: 14px;
+  background: #f8fafc;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, .12);
+  text-align: center;
+}
+.fallback strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+.fallback p {
+  margin: 0;
+  color: #667085;
+  font-size: 14px;
+  line-height: 1.5;
+}
+body.image-error .screen-image {
+  display: none;
+}
+body.image-error .fallback {
+  display: block;
+}
+body.show-image .intro-screen {
+  opacity: 0;
+  transform: translateX(-16px);
+  pointer-events: none;
+}
+body.show-image .image-screen {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+@media (display-mode: standalone) {
+  html,
+  body,
+  .app-shell {
+    background: #fff;
+  }
+}
+@supports (height: 100dvh) {
+  body,
+  .app-shell,
+  .intro-screen,
+  .image-screen,
+  .screen-image {
+    height: var(--app-height, 100dvh);
+  }
+}
+</style>
+</head>
+<body class="app-sizing-pending">
+<main class="app-shell" aria-label="Two-screen app prototype">
+  <button class="intro-screen" type="button" aria-label="Open app screen">
+    <img class="screen-image" src="./intro-screen.png" alt="Intro prototype screen" draggable="false" decoding="sync" fetchpriority="high" />
+    <div class="balance-patches intro-balance-patches" aria-hidden="true">
+      <span class="balance-patch intro-assets"></span>
+    </div>
+  </button>
+  <section class="image-screen" aria-label="Final app screen">
+    <img class="screen-image" src="./screens/accounts.png" alt="App preview screen" draggable="false" decoding="sync" fetchpriority="high" data-app-image />
+    <div class="balance-patches image-balance-patches" aria-hidden="true">
+      <span class="balance-patch account-assets hero"></span>
+      <span class="balance-patch account-assets card-one"></span>
+      <span class="balance-patch account-assets card-two"></span>
+      <span class="balance-patch watchlist-assets"></span>
+    </div>
+    <div class="hotspot-layer" aria-label="터치 가능한 앱 영역">
+      <button class="tap-zone" type="button" aria-label="Back" data-back="1" style="left:0.0%; top:5.2%; width:9.4%; height:6.4%;"></button>
+      <button class="tap-zone" type="button" aria-label="Search" data-screen="search" data-tap="Search" style="left:78.3%; top:6.4%; width:9.2%; height:5.2%;"></button>
+      <button class="tap-zone" type="button" aria-label="Inbox" data-tap="Inbox" style="left:90.1%; top:6.2%; width:9.3%; height:5.4%;"></button>
+      <button class="tap-zone" type="button" aria-label="Total Assets card" data-tap="Total Assets" style="left:3.0%; top:13.0%; width:94.0%; height:10.7%;"></button>
+      <button class="tap-zone" type="button" aria-label="Deposit" data-tap="Deposit" style="left:4.8%; top:26.2%; width:20.7%; height:7.8%;"></button>
+      <button class="tap-zone" type="button" aria-label="Exchange" data-tap="Exchange" style="left:27.0%; top:26.2%; width:22.6%; height:7.8%;"></button>
+      <button class="tap-zone" type="button" aria-label="RSP" data-tap="RSP" style="left:51.0%; top:26.2%; width:19.5%; height:7.8%;"></button>
+      <button class="tap-zone" type="button" aria-label="All" data-tap="All" style="left:73.2%; top:26.2%; width:21.0%; height:7.8%;"></button>
+      <button class="tap-zone" type="button" aria-label="All Accounts dropdown" data-tap="All Accounts" style="left:2.2%; top:36.5%; width:95.0%; height:6.1%;"></button>
+      <button class="tap-zone" type="button" aria-label="Margin Account" data-tap="Margin Account" style="left:3.0%; top:41.3%; width:94.0%; height:12.9%;"></button>
+      <button class="tap-zone" type="button" aria-label="Cash Account Crypto" data-tap="Cash Account" style="left:3.0%; top:55.4%; width:94.0%; height:13.4%;"></button>
+      <button class="tap-zone" type="button" aria-label="Edit Accounts" data-tap="Edit Accounts" style="left:32.5%; top:80.0%; width:35.5%; height:5.1%;"></button>
+      <button class="tap-zone" type="button" aria-label="Watchlists tab" data-screen="watchlists" data-tap="Watchlists" style="left:0.0%; top:88.5%; width:16.1%; height:11.5%;"></button>
+      <button class="tap-zone" type="button" aria-label="Markets tab" data-screen="markets" data-tap="Markets" style="left:16.1%; top:88.5%; width:16.7%; height:11.5%;"></button>
+      <button class="tap-zone" type="button" aria-label="Accounts tab" data-screen="accounts" data-tap="Accounts" style="left:32.8%; top:88.5%; width:16.9%; height:11.5%;"></button>
+      <button class="tap-zone" type="button" aria-label="Wealth tab" data-screen="wealth" data-tap="Wealth" style="left:49.7%; top:88.5%; width:16.2%; height:11.5%;"></button>
+      <button class="tap-zone" type="button" aria-label="Discover tab" data-screen="discover" data-tap="Discover" style="left:65.9%; top:88.5%; width:17.5%; height:11.5%;"></button>
+      <button class="tap-zone" type="button" aria-label="Search tab" data-screen="search" data-tap="Search" style="left:83.4%; top:88.5%; width:16.6%; height:11.5%;"></button>
+    </div>
+    <section class="fallback">
+      <strong>이미지를 찾을 수 없습니다</strong>
+      <p><code>intro-screen.png</code>와 <code>screens/</code> 안의 화면 이미지를 교체하면 앱 흐름이 그대로 바뀝니다.</p>
+    </section>
+  </section>
+  <div class="app-loader" aria-hidden="true">
+    <span class="loader-dot"></span>
+  </div>
+  <div class="sheet-backdrop" data-sheet aria-hidden="true">
+    <section class="action-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-grabber"></div>
+      <div class="sheet-body">
+        <h2 class="sheet-title" id="sheet-title">Action</h2>
+        <p class="sheet-copy" data-sheet-copy>이 프로토타입 화면에서는 실제 기능이 연결되어 있지 않습니다.</p>
+        <div class="sheet-actions">
+          <button class="sheet-action primary" type="button" data-sheet-close>확인</button>
+          <button class="sheet-action" type="button" data-sheet-close>닫기</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+<script>
+const images = Array.from(document.querySelectorAll(".screen-image"));
+const intro = document.querySelector(".intro-screen");
+const appImage = document.querySelector("[data-app-image]");
+const tapZones = Array.from(document.querySelectorAll(".tap-zone"));
+const sheet = document.querySelector("[data-sheet]");
+const sheetTitle = document.querySelector(".sheet-title");
+const sheetCopy = document.querySelector("[data-sheet-copy]");
+const screens = {
+  accounts: "./screens/accounts.png",
+  watchlists: "./screens/watchlists.png",
+  markets: "./screens/markets.png",
+  wealth: "./screens/wealth.png",
+  discover: "./screens/discover.png",
+  search: "./screens/search.png"
+};
+let activeScreen = "accounts";
+let previousScreen = "accounts";
+let lastViewportSignature = "";
+let stableViewportFrames = 0;
+let launchTimer = 0;
+document.body.dataset.activeScreen = activeScreen;
+
+function setAppHeight() {
+  const viewport = window.visualViewport;
+  const candidates = [
+    window.innerHeight,
+    document.documentElement.clientHeight,
+    viewport?.height
+  ].filter((value) => Number.isFinite(value) && value > 0);
+  const height = Math.ceil(Math.max(...candidates));
+  document.documentElement.style.setProperty("--app-height", `${height}px`);
+  return height;
+}
+
+function viewportSignature() {
+  const viewport = window.visualViewport;
+  return [
+    Math.round(window.innerWidth || 0),
+    Math.round(window.innerHeight || 0),
+    Math.round(document.documentElement.clientWidth || 0),
+    Math.round(document.documentElement.clientHeight || 0),
+    Math.round(viewport?.width || 0),
+    Math.round(viewport?.height || 0)
+  ].join("x");
+}
+
+function preloadImage(src) {
+  return new Promise((resolve, reject) => {
+    const preload = new Image();
+    preload.onload = resolve;
+    preload.onerror = reject;
+    preload.src = src;
+  });
+}
+
+function revealAfterStableViewport() {
+  setAppHeight();
+  const signature = viewportSignature();
+  stableViewportFrames = signature === lastViewportSignature ? stableViewportFrames + 1 : 0;
+  lastViewportSignature = signature;
+
+  if (stableViewportFrames >= 2) {
+    document.body.classList.remove("app-sizing-pending");
+    return;
+  }
+  requestAnimationFrame(revealAfterStableViewport);
+}
+
+function scheduleFit() {
+  stableViewportFrames = 0;
+  requestAnimationFrame(revealAfterStableViewport);
+}
+
+setAppHeight();
+scheduleFit();
+setTimeout(() => {
+  setAppHeight();
+  document.body.classList.remove("app-sizing-pending");
+}, 700);
+window.addEventListener("resize", scheduleFit, { passive: true });
+window.visualViewport?.addEventListener("resize", scheduleFit, { passive: true });
+window.addEventListener("orientationchange", () => {
+  setTimeout(scheduleFit, 250);
+}, { passive: true });
+window.addEventListener("pageshow", scheduleFit, { passive: true });
+
+Promise.allSettled([
+  preloadImage("./intro-screen.png"),
+  ...Object.values(screens).map(preloadImage)
+]).finally(() => {
+  scheduleFit();
+});
+
+function openImageScreen() {
+  setAppHeight();
+  document.body.classList.add("show-image");
+}
+
+function showIntroScreen() {
+  document.body.classList.remove("show-image");
+}
+
+function showLaunchThenOpen() {
+  window.clearTimeout(launchTimer);
+  setAppHeight();
+  document.body.classList.add("launching");
+  launchTimer = window.setTimeout(() => {
+    document.body.classList.remove("launching");
+    openImageScreen();
+  }, 520);
+}
+
+function setScreen(name, options = {}) {
+  if (!screens[name] || !appImage) return;
+  if (name !== activeScreen) previousScreen = activeScreen;
+  activeScreen = name;
+  document.body.dataset.activeScreen = name;
+  document.body.classList.add("screen-switching");
+  appImage.src = screens[name];
+  appImage.alt = `${name} app screen`;
+  openImageScreen();
+  window.setTimeout(() => document.body.classList.remove("screen-switching"), 150);
+  if (options.push !== false && location.hash !== `#${name}`) {
+    history.pushState({ screen: name }, "", `#${name}`);
+  }
+}
+
+function showTapFeedback(event, label) {
+  window.__lastPrototypeTap = label;
+}
+
+function openSheet(title, copy) {
+  if (!sheet) return;
+  sheetTitle.textContent = title;
+  sheetCopy.textContent = copy;
+  sheet.classList.add("is-open");
+  sheet.setAttribute("aria-hidden", "false");
+}
+
+function closeSheet() {
+  sheet?.classList.remove("is-open");
+  sheet?.setAttribute("aria-hidden", "true");
+}
+
+function runAction(label) {
+  const actions = {
+    Inbox: ["Inbox", "알림과 메시지 목록이 열리는 것처럼 동작합니다."],
+    "Total Assets": ["Total Assets", "총 자산 상세 화면으로 들어가는 자리입니다."],
+    Deposit: ["Deposit", "입금 화면으로 이어지는 프로토타입 액션입니다."],
+    Exchange: ["Exchange", "환전 화면으로 이어지는 프로토타입 액션입니다."],
+    RSP: ["RSP", "RSP 설정 화면으로 이어지는 프로토타입 액션입니다."],
+    All: ["All Services", "전체 서비스 목록을 여는 자리입니다."],
+    "All Accounts": ["All Accounts", "계좌 목록 접기/펼치기 액션처럼 반응합니다."],
+    "Margin Account": ["Margin Account", "Margin Account 상세 화면으로 들어가는 자리입니다."],
+    "Cash Account": ["Cash Account", "Cash Account 상세 화면으로 들어가는 자리입니다."],
+    "Edit Accounts": ["Edit Accounts", "계좌 편집 화면으로 이어지는 프로토타입 액션입니다."]
+  };
+  const [title, copy] = actions[label] || [label, "선택한 영역이 눌렸습니다."];
+  openSheet(title, copy);
+}
+
+intro.addEventListener("click", () => showLaunchThenOpen());
+intro.addEventListener("touchend", (event) => {
+  event.preventDefault();
+  showLaunchThenOpen();
+}, { passive: false });
+
+tapZones.forEach((zone) => {
+  zone.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    showTapFeedback(event, zone.dataset.tap || zone.getAttribute("aria-label") || "button");
+    if (zone.dataset.back) {
+      if (activeScreen === "search") setScreen(previousScreen || "accounts");
+      return;
+    }
+    if (zone.dataset.screen) {
+      setScreen(zone.dataset.screen);
+      return;
+    }
+    runAction(zone.dataset.tap || zone.getAttribute("aria-label") || "Action");
+  });
+});
+
+window.addEventListener("popstate", () => {
+  const screenName = location.hash.replace("#", "");
+  if (screens[screenName]) {
+    setScreen(screenName, { push: false });
+    return;
+  }
+  closeSheet();
+  document.body.classList.remove("show-image");
+});
+
+window.addEventListener("keydown", (event) => {
+  if ((event.key === "Enter" || event.key === " ") && !document.body.classList.contains("show-image")) {
+    event.preventDefault();
+    openImageScreen();
+  }
+});
+
+images.forEach((image) => {
+  image.addEventListener("error", () => {
+    document.body.classList.add("image-error");
+  });
+});
+
+document.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+});
+
+sheet?.addEventListener("click", (event) => {
+  if (event.target === sheet || event.target.closest("[data-sheet-close]")) closeSheet();
+});
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeSheet();
+});
+
+const initialScreen = location.hash.replace("#", "");
+if (screens[initialScreen]) {
+  setScreen(initialScreen, { push: false });
+}
+
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

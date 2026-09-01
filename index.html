@@ -11,16 +11,21 @@
 <meta name="application-name" content="Moomooapp" />
 <meta name="description" content="Fullscreen mobile prototype PWA." />
 <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
-<link rel="preload" as="image" href="./splash-screen.png" />
-<link rel="preload" as="image" href="./screens/accounts.png" />
-<link rel="preload" as="image" href="./screens/watchlists.png" />
-<link rel="preload" as="image" href="./screens/markets.png" />
-<link rel="preload" as="image" href="./screens/wealth.png" />
-<link rel="preload" as="image" href="./screens/discover.png" />
-<link rel="preload" as="image" href="./screens/search.png" />
-<link rel="manifest" href="./manifest.json" />
-<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+<link rel="preload" as="image" href="./splash-screen@2x.png" imagesrcset="./splash-screen.png 1x, ./splash-screen@2x.png 2x" />
+<link rel="preload" as="image" href="./screens/accounts@2x.png" imagesrcset="./screens/accounts.png 1x, ./screens/accounts@2x.png 2x" />
+<link rel="preload" as="image" href="./screens/watchlists@2x.png" imagesrcset="./screens/watchlists.png 1x, ./screens/watchlists@2x.png 2x" />
+<link rel="preload" as="image" href="./screens/markets@2x.png" imagesrcset="./screens/markets.png 1x, ./screens/markets@2x.png 2x" />
+<link rel="preload" as="image" href="./screens/wealth@2x.png" imagesrcset="./screens/wealth.png 1x, ./screens/wealth@2x.png 2x" />
+<link rel="preload" as="image" href="./screens/discover@2x.png" imagesrcset="./screens/discover.png 1x, ./screens/discover@2x.png 2x" />
+<link rel="preload" as="image" href="./screens/search@2x.png" imagesrcset="./screens/search.png 1x, ./screens/search@2x.png 2x" />
+<link rel="manifest" href="./manifest.json?v=16" />
+<link rel="apple-touch-icon" sizes="120x120" href="./icons/apple-touch-icon-120.png?v=16" />
+<link rel="apple-touch-icon" sizes="152x152" href="./icons/apple-touch-icon-152.png?v=16" />
+<link rel="apple-touch-icon" sizes="167x167" href="./icons/apple-touch-icon-167.png?v=16" />
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=16" />
+<link rel="apple-touch-icon-precomposed" href="./icons/apple-touch-icon.png?v=16" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=16" />
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png?v=16" />
 <title>Moomooapp</title>
 <style>
 * {
@@ -77,7 +82,7 @@ body.app-sizing-pending .app-shell {
   height: var(--app-height, 100vh);
   overflow: hidden;
   background: #fff;
-  transition: opacity .18s ease, transform .18s ease;
+  transition: opacity .14s ease;
 }
 .intro-screen {
   appearance: none;
@@ -96,7 +101,6 @@ body.app-sizing-pending .app-shell {
   place-items: start center;
   z-index: 1;
   opacity: 0;
-  transform: translateX(16px);
   pointer-events: none;
 }
 .screen-image {
@@ -109,8 +113,6 @@ body.app-sizing-pending .app-shell {
   object-fit: fill;
   object-position: top center;
   background: #fff;
-  transform: translateZ(0);
-  backface-visibility: hidden;
   -webkit-user-drag: none;
 }
 .hotspot-layer {
@@ -168,8 +170,8 @@ body.native-system-bars .native-mask.bottom {
   background: #fff;
 }
 .native-mask.bottom {
-  top: calc(var(--frame-top, 0px) + var(--frame-height, 1280px) * .968);
-  height: calc(var(--frame-height, 1280px) * .04);
+  top: calc(var(--frame-top, 0px) + var(--frame-height, 1280px) * .985);
+  height: calc(var(--frame-height, 1280px) * .015);
   background: #fff;
 }
 .intro-screen .native-mask.top,
@@ -377,12 +379,10 @@ body.image-error .fallback {
 }
 body.show-image .intro-screen {
   opacity: 0;
-  transform: translateX(-16px);
   pointer-events: none;
 }
 body.show-image .image-screen {
   opacity: 1;
-  transform: translateX(0);
   pointer-events: auto;
 }
 @media (display-mode: standalone) {
@@ -405,12 +405,12 @@ body.show-image .image-screen {
 <body class="app-sizing-pending">
 <main class="app-shell" aria-label="Two-screen app prototype">
   <button class="intro-screen" type="button" aria-label="Open app screen">
-    <img class="screen-image" src="./splash-screen.png" alt="Moomoo launch screen" draggable="false" decoding="sync" fetchpriority="high" />
+    <img class="screen-image" src="./splash-screen.png" srcset="./splash-screen.png 1x, ./splash-screen@2x.png 2x" alt="Moomoo launch screen" draggable="false" decoding="sync" fetchpriority="high" />
     <span class="native-mask top" aria-hidden="true"></span>
     <span class="native-mask bottom" aria-hidden="true"></span>
   </button>
   <section class="image-screen" aria-label="Final app screen">
-    <img class="screen-image" src="./screens/watchlists.png" alt="watchlists app screen" draggable="false" decoding="sync" fetchpriority="high" data-app-image />
+    <img class="screen-image" src="./screens/watchlists.png" srcset="./screens/watchlists.png 1x, ./screens/watchlists@2x.png 2x" alt="watchlists app screen" draggable="false" decoding="sync" fetchpriority="high" data-app-image />
     <div class="balance-patches image-balance-patches" aria-hidden="true">
       <span class="balance-patch account-assets hero"></span>
       <span class="balance-patch account-assets card-one"></span>
@@ -469,13 +469,22 @@ const tapZones = Array.from(document.querySelectorAll(".tap-zone"));
 const sheet = document.querySelector("[data-sheet]");
 const sheetTitle = document.querySelector(".sheet-title");
 const sheetCopy = document.querySelector("[data-sheet-copy]");
+
+function screenAsset(src) {
+  return {
+    src,
+    srcset: `${src} 1x, ${src.replace(/\.png$/, "@2x.png")} 2x`
+  };
+}
+
+const splashAsset = screenAsset("./splash-screen.png");
 const screens = {
-  accounts: "./screens/accounts.png",
-  watchlists: "./screens/watchlists.png",
-  markets: "./screens/markets.png",
-  wealth: "./screens/wealth.png",
-  discover: "./screens/discover.png",
-  search: "./screens/search.png"
+  accounts: screenAsset("./screens/accounts.png"),
+  watchlists: screenAsset("./screens/watchlists.png"),
+  markets: screenAsset("./screens/markets.png"),
+  wealth: screenAsset("./screens/wealth.png"),
+  discover: screenAsset("./screens/discover.png"),
+  search: screenAsset("./screens/search.png")
 };
 const requestedScreen = location.hash.replace("#", "");
 let activeScreen = screens[requestedScreen] ? requestedScreen : "watchlists";
@@ -504,22 +513,27 @@ function setAppHeight() {
   const designHeight = 1280;
   const designRatio = designWidth / designHeight;
   const viewportRatio = width / height;
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const snap = (value) => Math.round(value * dpr) / dpr;
   let frameWidth;
   let frameHeight;
 
   if (viewportRatio > designRatio) {
-    frameWidth = width;
-    frameHeight = width / designRatio;
-  } else {
     frameHeight = height;
     frameWidth = height * designRatio;
+  } else {
+    frameWidth = width;
+    frameHeight = width / designRatio;
   }
+
+  frameWidth = Math.min(width, snap(frameWidth));
+  frameHeight = Math.min(height, snap(frameHeight));
 
   document.documentElement.style.setProperty("--app-height", `${height}px`);
   document.documentElement.style.setProperty("--frame-width", `${frameWidth}px`);
   document.documentElement.style.setProperty("--frame-height", `${frameHeight}px`);
-  document.documentElement.style.setProperty("--frame-left", `${(width - frameWidth) / 2}px`);
-  document.documentElement.style.setProperty("--frame-top", "0px");
+  document.documentElement.style.setProperty("--frame-left", `${snap((width - frameWidth) / 2)}px`);
+  document.documentElement.style.setProperty("--frame-top", `${snap((height - frameHeight) / 2)}px`);
   return height;
 }
 
@@ -576,8 +590,12 @@ window.addEventListener("orientationchange", () => {
 window.addEventListener("pageshow", scheduleFit, { passive: true });
 
 Promise.allSettled([
-  preloadImage("./splash-screen.png"),
-  ...Object.values(screens).map(preloadImage)
+  preloadImage(splashAsset.src),
+  preloadImage(splashAsset.src.replace(/\.png$/, "@2x.png")),
+  ...Object.values(screens).flatMap((asset) => [
+    preloadImage(asset.src),
+    preloadImage(asset.src.replace(/\.png$/, "@2x.png"))
+  ])
 ]).finally(() => {
   scheduleFit();
 });
@@ -603,12 +621,14 @@ function showLaunchThenOpen() {
 }
 
 function setScreen(name, options = {}) {
-  if (!screens[name] || !appImage) return;
+  const asset = screens[name];
+  if (!asset || !appImage) return;
   if (name !== activeScreen) previousScreen = activeScreen;
   activeScreen = name;
   document.body.dataset.activeScreen = name;
   document.body.classList.add("screen-switching");
-  appImage.src = screens[name];
+  appImage.srcset = asset.srcset;
+  appImage.src = asset.src;
   appImage.alt = `${name} app screen`;
   if (options.open !== false) openImageScreen();
   window.setTimeout(() => document.body.classList.remove("screen-switching"), 150);
@@ -717,13 +737,12 @@ window.addEventListener("keydown", (event) => {
 });
 
 if (appImage) {
-  appImage.src = screens[activeScreen];
+  appImage.srcset = screens[activeScreen].srcset;
+  appImage.src = screens[activeScreen].src;
   appImage.alt = `${activeScreen} app screen`;
 }
 
-const isIOSLike = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-if (isIOSLike || new URLSearchParams(location.search).has("native-bars")) {
+if (new URLSearchParams(location.search).has("native-bars")) {
   document.body.classList.add("native-system-bars");
 }
 

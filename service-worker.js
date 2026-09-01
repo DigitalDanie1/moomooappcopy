@@ -1,22 +1,35 @@
-const CACHE_NAME = "image-preview-pwa-v13";
+const CACHE_NAME = "image-preview-pwa-v16";
 const SCOPE_URL = self.registration.scope;
 const APP_SHELL = [
   "./",
   "./index.html",
   "./splash-screen.png",
+  "./splash-screen@2x.png",
   "./intro-screen.png",
   "./app-screen.png",
   "./screens/accounts.png",
+  "./screens/accounts@2x.png",
   "./screens/watchlists.png",
+  "./screens/watchlists@2x.png",
   "./screens/markets.png",
+  "./screens/markets@2x.png",
   "./screens/wealth.png",
+  "./screens/wealth@2x.png",
   "./screens/discover.png",
+  "./screens/discover@2x.png",
   "./screens/search.png",
+  "./screens/search@2x.png",
   "./manifest.json",
+  "./icons/apple-touch-icon-120.png",
+  "./icons/apple-touch-icon-152.png",
+  "./icons/apple-touch-icon-167.png",
   "./icons/icon-192.png",
+  "./icons/icon-256.png",
   "./icons/icon-512.png",
   "./icons/maskable-512.png",
-  "./icons/apple-touch-icon.png"
+  "./icons/apple-touch-icon.png",
+  "./icons/icon-1024.png",
+  "./icons/logo-source-sharp.png"
 ].map((path) => new URL(path, SCOPE_URL).toString());
 
 self.addEventListener("install", (event) => {

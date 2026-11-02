@@ -12,12 +12,12 @@
 <meta name="description" content="Fullscreen mobile prototype PWA." />
 <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
 <link rel="preload" as="image" href="./splash-screen@2x.png" imagesrcset="./splash-screen.png 1x, ./splash-screen@2x.png 2x" />
-<link rel="preload" as="image" href="./screens/accounts@2x.png" imagesrcset="./screens/accounts.png 1x, ./screens/accounts@2x.png 2x" />
-<link rel="preload" as="image" href="./screens/watchlists@2x.png" imagesrcset="./screens/watchlists.png 1x, ./screens/watchlists@2x.png 2x" />
-<link rel="preload" as="image" href="./screens/markets@2x.png" imagesrcset="./screens/markets.png 1x, ./screens/markets@2x.png 2x" />
-<link rel="preload" as="image" href="./screens/wealth@2x.png" imagesrcset="./screens/wealth.png 1x, ./screens/wealth@2x.png 2x" />
-<link rel="preload" as="image" href="./screens/discover@2x.png" imagesrcset="./screens/discover.png 1x, ./screens/discover@2x.png 2x" />
-<link rel="preload" as="image" href="./screens/trade@2x.png" imagesrcset="./screens/trade.png 1x, ./screens/trade@2x.png 2x" />
+<link rel="preload" as="image" href="./screens/accounts@2x.png?v=20" imagesrcset="./screens/accounts.png?v=20 1x, ./screens/accounts@2x.png?v=20 2x" />
+<link rel="preload" as="image" href="./screens/watchlists@2x.png?v=20" imagesrcset="./screens/watchlists.png?v=20 1x, ./screens/watchlists@2x.png?v=20 2x" />
+<link rel="preload" as="image" href="./screens/markets@2x.png?v=20" imagesrcset="./screens/markets.png?v=20 1x, ./screens/markets@2x.png?v=20 2x" />
+<link rel="preload" as="image" href="./screens/wealth@2x.png?v=20" imagesrcset="./screens/wealth.png?v=20 1x, ./screens/wealth@2x.png?v=20 2x" />
+<link rel="preload" as="image" href="./screens/discover@2x.png?v=20" imagesrcset="./screens/discover.png?v=20 1x, ./screens/discover@2x.png?v=20 2x" />
+<link rel="preload" as="image" href="./screens/trade@2x.png?v=20" imagesrcset="./screens/trade.png?v=20 1x, ./screens/trade@2x.png?v=20 2x" />
 <link rel="manifest" href="./manifest.json?v=20" />
 <link rel="apple-touch-icon" sizes="120x120" href="./icons/apple-touch-icon-120.png?v=16" />
 <link rel="apple-touch-icon" sizes="152x152" href="./icons/apple-touch-icon-152.png?v=16" />
@@ -486,9 +486,11 @@ const sheetTitle = document.querySelector(".sheet-title");
 const sheetCopy = document.querySelector("[data-sheet-copy]");
 
 function screenAsset(src) {
+  const versionedSrc = `${src}?v=20`;
+  const versioned2x = `${src.replace(/\.png$/, "@2x.png")}?v=20`;
   return {
-    src,
-    srcset: `${src} 1x, ${src.replace(/\.png$/, "@2x.png")} 2x`
+    src: versionedSrc,
+    srcset: `${versionedSrc} 1x, ${versioned2x} 2x`
   };
 }
 

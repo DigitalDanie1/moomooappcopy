@@ -1,4 +1,4 @@
-const CACHE_NAME = "image-preview-pwa-v19";
+const CACHE_NAME = "image-preview-pwa-v20";
 const SCOPE_URL = self.registration.scope;
 const APP_SHELL = [
   "./",
@@ -17,8 +17,8 @@ const APP_SHELL = [
   "./screens/wealth@2x.png",
   "./screens/discover.png",
   "./screens/discover@2x.png",
-  "./screens/search.png",
-  "./screens/search@2x.png",
+  "./screens/trade.png",
+  "./screens/trade@2x.png",
   "./manifest.json",
   "./icons/apple-touch-icon-120.png",
   "./icons/apple-touch-icon-152.png",

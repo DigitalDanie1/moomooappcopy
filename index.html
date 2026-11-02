@@ -17,8 +17,8 @@
 <link rel="preload" as="image" href="./screens/markets@2x.png" imagesrcset="./screens/markets.png 1x, ./screens/markets@2x.png 2x" />
 <link rel="preload" as="image" href="./screens/wealth@2x.png" imagesrcset="./screens/wealth.png 1x, ./screens/wealth@2x.png 2x" />
 <link rel="preload" as="image" href="./screens/discover@2x.png" imagesrcset="./screens/discover.png 1x, ./screens/discover@2x.png 2x" />
-<link rel="preload" as="image" href="./screens/search@2x.png" imagesrcset="./screens/search.png 1x, ./screens/search@2x.png 2x" />
-<link rel="manifest" href="./manifest.json?v=19" />
+<link rel="preload" as="image" href="./screens/trade@2x.png" imagesrcset="./screens/trade.png 1x, ./screens/trade@2x.png 2x" />
+<link rel="manifest" href="./manifest.json?v=20" />
 <link rel="apple-touch-icon" sizes="120x120" href="./icons/apple-touch-icon-120.png?v=16" />
 <link rel="apple-touch-icon" sizes="152x152" href="./icons/apple-touch-icon-152.png?v=16" />
 <link rel="apple-touch-icon" sizes="167x167" href="./icons/apple-touch-icon-167.png?v=16" />
@@ -300,8 +300,8 @@ body.screen-switching .app-loader {
 }
 .demo-badge {
   position: fixed;
-  top: max(54px, calc(env(safe-area-inset-top) + 26px));
-  right: 12px;
+  top: var(--demo-top, 54px);
+  right: calc(100vw - var(--frame-left, 0px) - var(--frame-width, 100vw) + 12px);
   z-index: 20;
   padding: 4px 8px;
   border: 1px solid rgba(255, 106, 19, .65);
@@ -330,7 +330,7 @@ body[data-active-screen="accounts"] .account-assets {
 }
 .watchlist-assets {
   left: 3.1%;
-  top: 24.98%;
+  top: 28.85%;
   width: 31.4%;
   height: 4.0%;
   font-size: calc(var(--frame-width, 588px) * .0625);
@@ -343,21 +343,21 @@ body[data-active-screen="accounts"] .account-assets {
   background: #f7f8fa;
 }
 .account-assets.hero {
-  top: 18.55%;
+  top: 19.22%;
   height: 4.7%;
   font-size: calc(var(--frame-width, 588px) * .0792);
   line-height: .96;
   font-weight: 520;
 }
 .account-assets.card-one {
-  top: 49.45%;
+  top: 62.10%;
   height: 4.1%;
   font-size: calc(var(--frame-width, 588px) * .0645);
   line-height: .98;
   font-weight: 440;
 }
 .account-assets.card-two {
-  top: 63.95%;
+  top: 76.25%;
   height: 4.1%;
   font-size: calc(var(--frame-width, 588px) * .0645);
   line-height: .98;
@@ -436,7 +436,7 @@ body.show-image .image-screen {
     <span class="native-mask bottom" aria-hidden="true"></span>
     <div class="hotspot-layer" aria-label="터치 가능한 앱 영역">
       <button class="tap-zone" type="button" aria-label="Back" data-back="1" style="left:0.0%; top:5.2%; width:9.4%; height:6.4%;"></button>
-      <button class="tap-zone" type="button" aria-label="Search" data-screen="search" data-tap="Search" style="left:78.3%; top:6.4%; width:9.2%; height:5.2%;"></button>
+      <button class="tap-zone" type="button" aria-label="Search" data-tap="Search" style="left:78.3%; top:6.4%; width:9.2%; height:5.2%;"></button>
       <button class="tap-zone" type="button" aria-label="Inbox" data-tap="Inbox" style="left:90.1%; top:6.2%; width:9.3%; height:5.4%;"></button>
       <button class="tap-zone" type="button" aria-label="Total Assets card" data-tap="Total Assets" style="left:3.0%; top:13.0%; width:94.0%; height:10.7%;"></button>
       <button class="tap-zone" type="button" aria-label="Deposit" data-tap="Deposit" style="left:4.8%; top:26.2%; width:20.7%; height:7.8%;"></button>
@@ -447,12 +447,12 @@ body.show-image .image-screen {
       <button class="tap-zone" type="button" aria-label="Margin Account" data-tap="Margin Account" style="left:3.0%; top:41.3%; width:94.0%; height:12.9%;"></button>
       <button class="tap-zone" type="button" aria-label="Cash Account Crypto" data-tap="Cash Account" style="left:3.0%; top:55.4%; width:94.0%; height:13.4%;"></button>
       <button class="tap-zone" type="button" aria-label="Edit Accounts" data-tap="Edit Accounts" style="left:32.5%; top:80.0%; width:35.5%; height:5.1%;"></button>
-      <button class="tap-zone" type="button" aria-label="Watchlists tab" data-screen="watchlists" data-tap="Watchlists" style="left:0.0%; top:88.5%; width:16.1%; height:11.5%;"></button>
-      <button class="tap-zone" type="button" aria-label="Markets tab" data-screen="markets" data-tap="Markets" style="left:16.1%; top:88.5%; width:16.7%; height:11.5%;"></button>
-      <button class="tap-zone" type="button" aria-label="Accounts tab" data-screen="accounts" data-tap="Accounts" style="left:32.8%; top:88.5%; width:16.9%; height:11.5%;"></button>
-      <button class="tap-zone" type="button" aria-label="Wealth tab" data-screen="wealth" data-tap="Wealth" style="left:49.7%; top:88.5%; width:16.2%; height:11.5%;"></button>
-      <button class="tap-zone" type="button" aria-label="Discover tab" data-screen="discover" data-tap="Discover" style="left:65.9%; top:88.5%; width:17.5%; height:11.5%;"></button>
-      <button class="tap-zone" type="button" aria-label="Search tab" data-screen="search" data-tap="Search" style="left:83.4%; top:88.5%; width:16.6%; height:11.5%;"></button>
+      <button class="tap-zone" type="button" aria-label="Watchlists tab" data-screen="watchlists" data-tap="Watchlists" style="left:0%; top:90%; width:16.67%; height:10%;"></button>
+      <button class="tap-zone" type="button" aria-label="Markets tab" data-screen="markets" data-tap="Markets" style="left:16.67%; top:90%; width:16.67%; height:10%;"></button>
+      <button class="tap-zone" type="button" aria-label="Accounts tab" data-screen="accounts" data-tap="Accounts" style="left:33.34%; top:90%; width:16.67%; height:10%;"></button>
+      <button class="tap-zone" type="button" aria-label="Wealth tab" data-screen="wealth" data-tap="Wealth" style="left:50.01%; top:90%; width:16.67%; height:10%;"></button>
+      <button class="tap-zone" type="button" aria-label="Discover tab" data-screen="discover" data-tap="Discover" style="left:66.68%; top:90%; width:16.66%; height:10%;"></button>
+      <button class="tap-zone" type="button" aria-label="Trade tab" data-screen="trade" data-tap="Trade" style="left:83.34%; top:90%; width:16.66%; height:10%;"></button>
     </div>
     <section class="fallback">
       <strong>이미지를 찾을 수 없습니다</strong>
@@ -499,7 +499,7 @@ const screens = {
   markets: screenAsset("./screens/markets.png"),
   wealth: screenAsset("./screens/wealth.png"),
   discover: screenAsset("./screens/discover.png"),
-  search: screenAsset("./screens/search.png")
+  trade: screenAsset("./screens/trade.png")
 };
 const requestedScreen = location.hash.replace("#", "");
 let activeScreen = screens[requestedScreen] ? requestedScreen : "watchlists";
@@ -549,6 +549,7 @@ function setAppHeight() {
   document.documentElement.style.setProperty("--frame-height", `${frameHeight}px`);
   document.documentElement.style.setProperty("--frame-left", `${snap((width - frameWidth) / 2)}px`);
   document.documentElement.style.setProperty("--frame-top", `${snap((height - frameHeight) / 2)}px`);
+  document.documentElement.style.setProperty("--demo-top", `${snap((height - frameHeight) / 2 + frameHeight * .042)}px`);
   return height;
 }
 

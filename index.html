@@ -529,29 +529,32 @@ function setAppHeight() {
   const designWidth = 588;
   const designHeight = 1280;
   const designRatio = designWidth / designHeight;
-  const viewportRatio = width / height;
+  const topOffset = Math.min(width / designWidth, height / designHeight) * 24;
+  const availableHeight = height - topOffset;
+  const viewportRatio = width / availableHeight;
   const dpr = Math.max(1, window.devicePixelRatio || 1);
   const snap = (value) => Math.round(value * dpr) / dpr;
   let frameWidth;
   let frameHeight;
 
   if (viewportRatio > designRatio) {
-    frameHeight = height;
-    frameWidth = height * designRatio;
+    frameHeight = availableHeight;
+    frameWidth = availableHeight * designRatio;
   } else {
     frameWidth = width;
     frameHeight = width / designRatio;
   }
 
   frameWidth = Math.min(width, snap(frameWidth));
-  frameHeight = Math.min(height, snap(frameHeight));
+  frameHeight = Math.min(availableHeight, snap(frameHeight));
+  const frameTop = snap(topOffset + (availableHeight - frameHeight) / 2);
 
   document.documentElement.style.setProperty("--app-height", `${height}px`);
   document.documentElement.style.setProperty("--frame-width", `${frameWidth}px`);
   document.documentElement.style.setProperty("--frame-height", `${frameHeight}px`);
   document.documentElement.style.setProperty("--frame-left", `${snap((width - frameWidth) / 2)}px`);
-  document.documentElement.style.setProperty("--frame-top", `${snap((height - frameHeight) / 2)}px`);
-  document.documentElement.style.setProperty("--demo-top", `${snap((height - frameHeight) / 2 + frameHeight * .042)}px`);
+  document.documentElement.style.setProperty("--frame-top", `${frameTop}px`);
+  document.documentElement.style.setProperty("--demo-top", `${snap(frameTop + frameHeight * .042)}px`);
   return height;
 }
 
